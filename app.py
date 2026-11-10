@@ -1,8 +1,28 @@
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_wtf.csrf import CSRFProtect, generate_csrf
 import os
 import psycopg
 from flask import Flask, jsonify
 
 app = Flask(__name__)
+
+app.config.update(
+    SECRET_KEY=os.getenv("SESSION_SECRET"),
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    PERMANENT_SESSION_LIFETIME=1800
+)
+
+csrf = CSRFProtect(app)
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
 
 def get_db_connection():
     database_url = os.getenv("DATABASE_URL")
