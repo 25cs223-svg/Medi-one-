@@ -4,6 +4,7 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 import os
 import psycopg
 from flask import Flask, jsonify
+from app.extensions import limiter
 
 app = Flask(__name__)
 
@@ -17,12 +18,13 @@ app.config.update(
 
 csrf = CSRFProtect(app)
 
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://"
-)
+limiter.init_app(app)
+
+
+
+from app.routes.auth import auth_bp
+
+app.register_blueprint(auth_bp)
 
 def get_db_connection():
     database_url = os.getenv("DATABASE_URL")
