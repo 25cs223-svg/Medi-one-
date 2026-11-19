@@ -5,10 +5,10 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT NOT NULL,
     role VARCHAR(20) NOT NULL
         CHECK (role IN ('patient', 'doctor')),
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
     email_verification_token_hash TEXT,
-    email_verification_expires_at TIMESTAMPTZ,
+    email_verification_expires_at TIMESTAMPTZ
 );
 
 CREATE TABLE IF NOT EXISTS patient_profiles (
@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS doctor_profiles (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     specialization VARCHAR(150),
-    license_number VARCHAR(100) UNIQUE
+    license_number VARCHAR(100) UNIQUE,
     verification_status VARCHAR(20) NOT NULL DEFAULT 'pending'
-    CHECK (verification_status IN ('pending', 'approved', 'rejected')),
+    CHECK (verification_status IN ('pending', 'approved', 'rejected'))
 );
 
 CREATE TABLE IF NOT EXISTS medications (
