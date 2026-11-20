@@ -1,3 +1,4 @@
+import psycopg
 from flask_wtf.csrf import generate_csrf
 import os
 import secrets
