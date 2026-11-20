@@ -2,9 +2,9 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_wtf.csrf import CSRFProtect, generate_csrf
 import os
-import psycopg
 from flask import Flask, jsonify
 from app.extensions import limiter
+from app.database import get_db_connection
 
 app = Flask(__name__)
 
@@ -25,15 +25,6 @@ limiter.init_app(app)
 from app.routes.auth import auth_bp
 
 app.register_blueprint(auth_bp)
-
-def get_db_connection():
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        raise RuntimeError("DATABASE_URL is not configured")
-
-    return psycopg.connect(database_url, connect_timeout=10)
-
 
 @app.route("/")
 def home():

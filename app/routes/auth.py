@@ -7,7 +7,7 @@ from urllib.parse import urljoin, urlparse
 from app.extensions import limiter
 
 
-import psycopg
+from app.database import get_db_connection
 from flask import (
     Blueprint,
     request,
@@ -22,15 +22,6 @@ from app.services.email_service import send_verification_email
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
-
-
-def get_db_connection():
-    database_url = os.getenv("DATABASE_URL")
-
-    if not database_url:
-        raise RuntimeError("DATABASE_URL is missing")
-
-    return psycopg.connect(database_url, connect_timeout=10)
 
 
 def hash_token(token):
